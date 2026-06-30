@@ -1150,9 +1150,58 @@ async function init() {
 
 async function fetchCounts() {
   try {
-    // HN: slot counts start at 0, server-side lock handles cap
-    renderSlots(); return;
-    const url = 'HN_CSV_URL_HERE';
+    const url = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vT96HrSPGFiv6KauRUOu5uaPWeOrWYZLR_wpfl-ZeeEv3E1FD9h5-Er7c-Ro6F10ZihSuNOn_vbSbh2/pub?gid=2044445367&single=true&output=csv&t=' + Date.now();
+    const r = await fetch(url);
+    const text = await r.text();
+    const lines = text.trim().split('\n').slice(1);
+
+    const SLOT_MAP = {};
+    const SLOT_TIMES = ['7:00', '7:30', '8:00', '8:30', '9:00', '9:30'];
+    const SLOT_IDS   = ['s1',   's2',   's3',   's4',   's5',   's6'];
+    SLOT_TIMES.forEach((t, i) => { SLOT_MAP[t] = SLOT_IDS[i]; });
+
+    const slotCounts = {
+      '09': { s1:0, s2:0, s3:0, s4:0, s5:0, s6:0 },
+      '10': { s1:0, s2:0, s3:0, s4:0, s5:0, s6:0 },
+    };
+    const examCounts = {};
+    let total = 0;
+
+    lines.forEach(line => {
+      if (!line.trim()) return;
+      const cols = [];
+      let cur = '', inQ = false;
+      for (let i = 0; i < line.length; i++) {
+        if (line[i] === '"') { inQ = !inQ; }
+        else if (line[i] === ',' && !inQ) { cols.push(cur.trim()); cur = ''; }
+        else { cur += line[i]; }
+      }
+      cols.push(cur.trim());
+
+      const rawDay = (cols[7] || '').trim();
+      const sampleDay = rawDay.split('/')[0].padStart(2, '0');
+      const sampleSlot = (cols[8] || '').trim();
+      const rawExam = (cols[9] || '').trim();
+      const examDate = rawExam.length >= 5 ? rawExam.substring(0, 5) : '';
+
+      const startTime = sampleSlot.substring(0, 4).trim();
+      const slotId = SLOT_MAP[startTime];
+      if (sampleDay && slotId && slotCounts[sampleDay]) {
+        slotCounts[sampleDay][slotId]++;
+      }
+      if (examDate) {
+        examCounts[examDate] = (examCounts[examDate] || 0) + 1;
+      }
+      total++;
+    });
+
+    state.slotCounts = slotCounts;
+    state.examCounts = examCounts;
+    state.totalRegistered = total;
+  } catch(e) {
+    console.log('fetchCounts error:', e);
+  }
+}
     const r = await fetch(url);
     const text = await r.text();
     const lines = text.trim().split('\n').slice(1);
