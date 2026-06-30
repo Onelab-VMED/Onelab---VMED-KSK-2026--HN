@@ -642,7 +642,747 @@
   .success-detail:last-child { border-bottom: none; margin-bottom: 0; padding-bottom: 0; }
   .success-detail strong { color: var(--green-dark); }
 
-  /* ── ERROR ── */
+  /* ── SUCCESS SECTIONS ── */
+  .success-sections { max-width: 480px; margin: 24px auto 0; text-align: left; }
+  .success-section {
+    background: white;
+    border-radius: var(--radius);
+    box-shadow: var(--shadow);
+    border: 1px solid rgba(27,107,58,0.07);
+    margin-bottom: 16px;
+    overflow: hidden;
+  }
+  .success-section-header {
+    background: var(--green-dark);
+    color: white;
+    padding: 12px 16px;
+    font-family: 'Be Vietnam Pro', sans-serif;
+    font-size: 13px;
+    font-weight: 700;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+  .success-section-body { padding: 16px; }
+  .luu-y-item {
+    display: flex;
+    gap: 10px;
+    align-items: flex-start;
+    margin-bottom: 12px;
+    font-size: 13px;
+    color: var(--gray-600);
+    line-height: 1.55;
+  }
+  .luu-y-item:last-child { margin-bottom: 0; }
+  .luu-y-num {
+    width: 22px; height: 22px;
+    background: var(--green-dark);
+    color: white;
+    border-radius: 50%;
+    font-size: 11px;
+    font-weight: 700;
+    display: flex; align-items: center; justify-content: center;
+    flex-shrink: 0;
+    margin-top: 1px;
+  }
+  .uu-dai-item {
+    border: 1px solid rgba(27,107,58,0.15);
+    border-radius: var(--radius-sm);
+    padding: 12px 14px;
+    margin-bottom: 10px;
+    background: var(--green-pale);
+  }
+  .uu-dai-item:last-child { margin-bottom: 0; }
+  .uu-dai-name {
+    font-family: 'Be Vietnam Pro', sans-serif;
+    font-size: 13px;
+    font-weight: 700;
+    color: var(--green-dark);
+    margin-bottom: 4px;
+  }
+  .uu-dai-price {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-top: 6px;
+  }
+  .uu-dai-old {
+    font-size: 12px;
+    color: var(--gray-400);
+    text-decoration: line-through;
+  }
+  .uu-dai-new {
+    font-size: 14px;
+    font-weight: 700;
+    color: var(--green-dark);
+  }
+  .uu-dai-badge {
+    background: #E53935;
+    color: white;
+    font-size: 10px;
+    font-weight: 700;
+    padding: 2px 7px;
+    border-radius: 10px;
+  }
+  .uu-dai-note {
+    font-size: 11px;
+    color: var(--gray-400);
+    margin-top: 4px;
+  }
+  .hotline-btn {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    background: var(--green-dark);
+    color: white;
+    padding: 12px;
+    border-radius: var(--radius-sm);
+    font-size: 14px;
+    font-weight: 700;
+    text-decoration: none;
+    margin-top: 12px;
+  }
+  .error-msg {
+    font-size: 12px;
+    color: var(--red);
+    margin-top: 5px;
+    display: none;
+  }
+  .field-error input, .field-error textarea, .field-error select {
+    border-color: var(--red) !important;
+  }
+  .field-error .error-msg { display: block; }
+
+  /* ── NOTICE ── */
+  .notice {
+    background: #FFF8E1;
+    border: 1px solid #FFE082;
+    border-radius: var(--radius-sm);
+    padding: 12px 16px;
+    font-size: 12.5px;
+    color: #5D4037;
+    line-height: 1.6;
+    margin-bottom: 20px;
+    display: flex;
+    gap: 10px;
+    align-items: flex-start;
+  }
+  .notice-icon { font-size: 16px; flex-shrink: 0; margin-top: 1px; }
+
+  /* ── FOOTER ── */
+  .form-footer {
+    background: var(--green-dark);
+    color: rgba(255,255,255,0.7);
+    text-align: center;
+    padding: 20px 24px;
+    font-size: 12px;
+    line-height: 1.6;
+  }
+  .form-footer strong { color: white; }
+
+  /* ── VALIDATION TOAST ── */
+  #toast {
+    position: fixed;
+    bottom: 24px; left: 50%;
+    transform: translateX(-50%) translateY(80px);
+    background: var(--gray-800);
+    color: white;
+    padding: 12px 20px;
+    border-radius: 8px;
+    font-size: 13px;
+    font-weight: 500;
+    z-index: 9999;
+    transition: transform 0.3s ease;
+    white-space: nowrap;
+    box-shadow: 0 4px 16px rgba(0,0,0,0.2);
+  }
+  #toast.show { transform: translateX(-50%) translateY(0); }
+  #toast.error { background: var(--red); }
+</style>
+</head>
+<body>
+
+<!-- HEADER -->
+<header class="site-header">
+  <div class="header-inner">
+    <div class="logo-mark">
+      <svg viewBox="0 0 24 24"><path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5s1.12-2.5 2.5-2.5 2.5 1.12 2.5 2.5-1.12 2.5-2.5 2.5z"/></svg>
+    </div>
+    <div class="brand-text">
+      <div class="brand-name">ONELAB</div>
+      <div class="brand-sub">Hệ thống xét nghiệm & chẩn đoán y khoa</div>
+    </div>
+    <div class="city-badge">HCM</div>
+  </div>
+</header>
+
+<!-- HERO -->
+<div class="hero">
+  <div class="hero-img-wrap">
+    <img class="hero-img-full" src="https://cloudgo.vn/media/articles/trung-tam-xet-nghiem-cong-nghe-cao-onelab_fmIRlvrsgm.webp" alt="ONELAB">
+  </div>
+  <div class="hero-text">
+    <div class="hero-label">✦ Chương trình sức khỏe doanh nghiệp 2026</div>
+    <div class="hero-title">Đăng ký Khám Sức Khỏe<br><span>VMED Group 2026</span></div>
+    <div class="hero-desc">ONELAB trân trọng đồng hành cùng đại gia đình VMED Group — vì một đội ngũ khỏe mạnh & vững mạnh.</div>
+    <div class="hero-info-row">
+      <div class="hero-info-chip">📍 Hồ Chí Minh</div>
+      <div class="hero-info-chip">🧪 Lấy mẫu: <strong>07–08/07</strong></div>
+      <div class="hero-info-chip">🏥 Khám: <strong>16–19 & 21–22/07</strong></div>
+    </div>
+  </div>
+</div>
+
+<!-- MAIN FORM -->
+<div class="main">
+  <form id="reg-form">
+
+    <!-- SECTION 1: THÔNG TIN CÁ NHÂN -->
+    <div class="section-label">
+      <div class="section-num">1</div>
+      <div class="section-title-group">
+        <div class="section-title">Thông tin CBNV</div>
+        <div class="section-sub">Điền chính xác theo giấy tờ tùy thân</div>
+      </div>
+    </div>
+    <div class="section-divider"></div>
+
+    <div class="card">
+      <div class="form-row">
+        <div class="form-group" id="fg-name">
+          <label>Họ và tên <span class="req">*</span></label>
+          <input type="text" id="f-name" placeholder="Nguyễn Văn A">
+          <div class="error-msg">Vui lòng nhập họ tên</div>
+        </div>
+        <div class="form-group" id="fg-dob">
+          <label>Ngày sinh <span class="req">*</span></label>
+          <input type="text" id="f-dob" placeholder="DD/MM/YYYY" maxlength="10" oninput="formatDOB(this)">
+          <div class="error-msg">Vui lòng nhập đúng định dạng DD/MM/YYYY</div>
+        </div>
+      </div>
+
+      <div class="form-row">
+        <div class="form-group" id="fg-cccd">
+          <label>Số CCCD / CMND <span class="req">*</span></label>
+          <input type="text" id="f-cccd" placeholder="0xxxxxxxxx" maxlength="12">
+          <div class="error-msg">Vui lòng nhập số CCCD hợp lệ</div>
+        </div>
+        <div class="form-group" id="fg-company">
+          <label>Đơn vị / Phòng ban <span class="req">*</span></label>
+          <input type="text" id="f-company" placeholder="Tên công ty / phòng ban">
+          <div class="error-msg">Vui lòng nhập đơn vị</div>
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label>Tiền sử bệnh lý <span style="font-weight:400;color:var(--gray-400)">(nếu có)</span></label>
+        <textarea id="f-history" placeholder="Ví dụ: tăng huyết áp, tiểu đường, tim mạch... (để trống nếu không có)"></textarea>
+      </div>
+
+      <div class="form-group">
+        <label>Đang điều trị / dùng thuốc <span style="font-weight:400;color:var(--gray-400)">(nếu có)</span></label>
+        <textarea id="f-treatment" placeholder="Tên thuốc hoặc phác đồ đang sử dụng (để trống nếu không có)"></textarea>
+      </div>
+    </div>
+
+    <!-- SECTION 2: ĐĂNG KÝ LẤY MẪU -->
+    <div class="section-label">
+      <div class="section-num">2</div>
+      <div class="section-title-group">
+        <div class="section-title">Lấy mẫu tầm soát</div>
+        <div class="section-sub">📍 Khu vực tầng G — 509 Tô Hiến Thành, P. Diên Hồng, TP.HCM</div>
+      </div>
+    </div>
+    <div class="section-divider"></div>
+
+    <div class="card">
+      <div class="notice">
+        <span class="notice-icon">⏰</span>
+        <span>Thời gian lấy mẫu từ <strong>7:00 – 10:00 sáng</strong>. Nhịn ăn ít nhất <strong>8 tiếng</strong> trước giờ lấy mẫu, chỉ uống nước lọc.</span>
+      </div>
+
+      <!-- Day tabs -->
+      <div class="slot-section-title">Chọn ngày</div>
+      <div class="day-tabs">
+        <div class="day-tab active" id="tab-07" onclick="switchDay('07')">
+          <div class="day-tab-label">Thứ Hai</div>
+          <div class="day-tab-date">07</div>
+          <div class="day-tab-month">Tháng 07</div>
+        </div>
+        <div class="day-tab" id="tab-08" onclick="switchDay('08')">
+          <div class="day-tab-label">Thứ Ba</div>
+          <div class="day-tab-date">08</div>
+          <div class="day-tab-month">Tháng 07</div>
+        </div>
+      </div>
+
+      <!-- Slot grid -->
+      <div class="slot-section-title">Chọn khung giờ</div>
+      <div class="slots-grid" id="slots-grid"></div>
+
+      <!-- Selection summary -->
+      <div class="selection-summary" id="slot-summary">
+        <div class="summary-title">✓ Đã chọn</div>
+        <div class="summary-row">
+          <span>Ngày lấy mẫu</span>
+          <strong id="sum-sample-day">—</strong>
+        </div>
+        <div class="summary-row">
+          <span>Khung giờ</span>
+          <strong id="sum-sample-slot">—</strong>
+        </div>
+      </div>
+    </div>
+
+    <!-- SECTION 3: ĐĂNG KÝ KHÁM TỔNG QUÁT -->
+    <div class="section-label">
+      <div class="section-num">3</div>
+      <div class="section-title-group">
+        <div class="section-title">Khám tổng quát</div>
+        <div class="section-sub">📍 PK Đa Khoa Viethope — 523 Tô Hiến Thành, P. Diên Hồng, TP.HCM (Kế ONELAB)</div>
+      </div>
+    </div>
+    <div class="section-divider"></div>
+
+    <div class="card">
+      <div class="main-round-label">Vòng chính — ưu tiên chọn</div>
+      <div class="exam-days-grid" id="main-exam-grid"></div>
+
+      <div class="vetscrn-label">Khám vét — nếu không có lịch phù hợp</div>
+      <div class="exam-days-grid" id="vet-exam-grid"></div>
+
+      <div class="selection-summary" id="exam-summary">
+        <div class="summary-title">✓ Đã chọn</div>
+        <div class="summary-row">
+          <span>Ngày khám tổng quát</span>
+          <strong id="sum-exam-day">—</strong>
+        </div>
+      </div>
+    </div>
+
+    <!-- CONSENT + SUBMIT -->
+    <div class="card submit-area">
+      <div class="consent-block">
+        Bằng cách đăng ký, tôi xác nhận các thông tin cung cấp là <strong>chính xác và hoàn toàn tự nguyện</strong>. Tôi đồng ý để ONELAB sử dụng thông tin này cho mục đích tổ chức chương trình khám sức khỏe nội bộ của VMED Group.
+      </div>
+      <div class="consent-check" style="margin-bottom:20px;">
+        <input type="checkbox" id="consent" onchange="updateSubmitBtn()">
+        <label for="consent">Tôi đã đọc và đồng ý với các điều khoản trên</label>
+      </div>
+      <button type="button" class="btn-submit" id="btn-submit" onclick="handleSubmit()" disabled>
+        <span id="btn-text">Xác nhận đăng ký</span>
+        <span class="btn-loading" id="btn-loading">
+          <span class="spinner"></span> Đang gửi...
+        </span>
+      </button>
+    </div>
+
+  </form>
+
+  <!-- SUCCESS SCREEN -->
+  <div id="success-screen">
+    <div class="success-icon">
+      <svg viewBox="0 0 24 24"><path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z"/></svg>
+    </div>
+    <div class="success-title">Đăng ký thành công!</div>
+    <div class="success-desc">Thông tin của bạn đã được ghi nhận. Cảm ơn bạn đã lựa chọn chúng tôi — ONELAB hân hạnh được đồng hành cùng hành trình sức khỏe dài lâu dựa trên sự thấu hiểu sâu sắc.</div>
+
+    <!-- XÁC NHẬN -->
+    <div class="success-card">
+      <div class="success-card-title">📋 Xác nhận đăng ký của bạn</div>
+      <div class="success-detail"><span>Họ tên</span><strong id="sc-name">—</strong></div>
+      <div class="success-detail"><span>CCCD</span><strong id="sc-cccd">—</strong></div>
+      <div class="success-detail"><span>Đơn vị</span><strong id="sc-company">—</strong></div>
+      <div class="success-detail"><span>Lấy mẫu</span><strong id="sc-sample">—</strong></div>
+      <div class="success-detail"><span>Khám tổng quát</span><strong id="sc-exam">—</strong></div>
+    </div>
+
+    <div class="success-sections">
+
+      <!-- LƯU Ý TRƯỚC KHI LẤY MẪU -->
+      <div class="success-section">
+        <div class="success-section-header">⚠️ Lưu ý trước khi lấy mẫu</div>
+        <div class="success-section-body">
+          <div class="luu-y-item"><div class="luu-y-num">1</div><span><strong>Nhịn ăn 8–10 tiếng</strong> trước khi lấy mẫu, đặc biệt các xét nghiệm đường huyết và mỡ máu. Vẫn có thể uống nước lọc.</span></div>
+          <div class="luu-y-item"><div class="luu-y-num">2</div><span><strong>Thời điểm tốt nhất</strong> là buổi sáng lúc đói — nồng độ các chất trong máu phản ánh trung thực nhất.</span></div>
+          <div class="luu-y-item"><div class="luu-y-num">3</div><span><strong>Giữ tâm lý thoải mái</strong> — lo lắng, căng thẳng có thể ảnh hưởng đến huyết áp, đường huyết và cortisol.</span></div>
+          <div class="luu-y-item"><div class="luu-y-num">4</div><span><strong>Tránh vận động gắng sức</strong> trước khi lấy máu.</span></div>
+          <div class="luu-y-item"><div class="luu-y-num">5</div><span><strong>Tham khảo ý kiến bác sĩ</strong> nếu đang dùng thuốc hoặc thực phẩm chức năng trước khi xét nghiệm.</span></div>
+          <div class="luu-y-item"><div class="luu-y-num">6</div><span><strong>Phụ nữ</strong> nên tránh lấy máu và nước tiểu trong những ngày hành kinh.</span></div>
+        </div>
+      </div>
+
+      <!-- LƯU Ý SAU KHI LẤY MẪU -->
+      <div class="success-section">
+        <div class="success-section-header">✅ Lưu ý sau khi lấy mẫu</div>
+        <div class="success-section-body">
+          <div class="luu-y-item"><div class="luu-y-num">1</div><span><strong>Giữ băng dán</strong> tại vị trí lấy máu tối thiểu 15–30 phút để hạn chế chảy máu hoặc bầm tím.</span></div>
+          <div class="luu-y-item"><div class="luu-y-num">2</div><span><strong>Uống đủ nước</strong> và nghỉ ngơi hợp lý sau khi lấy mẫu.</span></div>
+          <div class="luu-y-item"><div class="luu-y-num">3</div><span><strong>Tránh mang vác vật nặng</strong> hoặc vận động mạnh bằng tay vừa lấy máu trong vài giờ đầu.</span></div>
+          <div class="luu-y-item"><div class="luu-y-num">4</div><span>Nếu xuất hiện <strong>bầm tím nhẹ</strong> tại vị trí lấy máu — đây là phản ứng thường gặp và sẽ tự cải thiện sau vài ngày.</span></div>
+          <div class="luu-y-item"><div class="luu-y-num">5</div><span>Nếu <strong>chảy máu kéo dài, sưng đau nhiều</strong> hoặc có dấu hiệu bất thường — liên hệ ONELAB hoặc cơ sở y tế gần nhất.</span></div>
+          <div class="luu-y-item"><div class="luu-y-num">6</div><span><strong>Theo dõi thời gian trả kết quả</strong> và liên hệ ONELAB nếu cần giải đáp thêm.</span></div>
+        </div>
+      </div>
+
+      <!-- ƯU ĐÃI ĐẶC QUYỀN -->
+      <div class="success-section">
+        <div class="success-section-header">🎁 Ưu đãi đặc quyền dành riêng cho Đại gia đình VMED</div>
+        <div class="success-section-body">
+          <p style="font-size:12px;color:var(--gray-400);margin-bottom:12px;">Giảm 10% toàn bộ dịch vụ xét nghiệm tại ONELAB — áp dụng cho CBNV VMED và người thân.</p>
+
+          <div class="uu-dai-item">
+            <div class="uu-dai-name">🦠 Gói tầm soát STI & bệnh lây truyền</div>
+            <div class="uu-dai-note">HIV, Syphilis, STI 13 tác nhân, Viêm gan B/C...</div>
+            <div class="uu-dai-price">
+              <span class="uu-dai-old">1,508,000đ</span>
+              <span class="uu-dai-new">1,357,200đ</span>
+              <span class="uu-dai-badge">-10%</span>
+            </div>
+          </div>
+
+          <div class="uu-dai-item">
+            <div class="uu-dai-name">🪱 Gói ký sinh trùng cơ bản</div>
+            <div class="uu-dai-note">Cysticercosis, Echinococcus, Toxoplasma...</div>
+            <div class="uu-dai-price">
+              <span class="uu-dai-old">1,003,000đ</span>
+              <span class="uu-dai-new">902,700đ</span>
+              <span class="uu-dai-badge">-10%</span>
+            </div>
+          </div>
+
+          <div class="uu-dai-item">
+            <div class="uu-dai-name">🔬 Gói HPV & sức khỏe phụ khoa</div>
+            <div class="uu-dai-note">HPV 16 genotype, HPV 40 type, Pap smear...</div>
+            <div class="uu-dai-price">
+              <span class="uu-dai-old">1,313,000đ</span>
+              <span class="uu-dai-new">1,181,700đ</span>
+              <span class="uu-dai-badge">-10%</span>
+            </div>
+          </div>
+
+          <div class="uu-dai-item">
+            <div class="uu-dai-name">🎗️ Gói tầm soát ung thư OnePlus Onco</div>
+            <div class="uu-dai-note">Tầm soát đa ung thư chuyên sâu</div>
+            <div class="uu-dai-price">
+              <span class="uu-dai-old">13,200,000đ</span>
+              <span class="uu-dai-new">11,220,000đ</span>
+              <span class="uu-dai-badge">-15%</span>
+            </div>
+          </div>
+
+          <div class="uu-dai-item">
+            <div class="uu-dai-name">🧬 Gói tầm soát ung thư OneScan Onco</div>
+            <div class="uu-dai-note">Gói tầm soát ung thư toàn diện cao cấp</div>
+            <div class="uu-dai-price">
+              <span class="uu-dai-old">17,890,000đ</span>
+              <span class="uu-dai-new">15,206,500đ</span>
+              <span class="uu-dai-badge">-15%</span>
+            </div>
+          </div>
+
+          <a href="tel:19002555 99" class="hotline-btn">📞 Đặt lịch ưu đãi: 1900 25 55 99</a>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</div>
+
+<!-- FOOTER -->
+<div class="form-footer">
+  <strong>ONELAB – Hệ thống Xét nghiệm & Chẩn đoán Y khoa</strong><br>
+  Hotline hỗ trợ: <strong>1900 25 55 99</strong> &nbsp;|&nbsp; Email: <strong>cskh@onelab.vn</strong><br>
+  Chương trình dành riêng cho cán bộ nhân viên <strong>VMED Group</strong>
+</div>
+
+<div id="toast"></div>
+
+<script>
+// ── CONFIG ──────────────────────────────────────────────────────────────────
+const GOOGLE_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbz1fbJ3onjr5wEJsk2JA1ScocQyI3-N1bbCG_L1NQLWn3Zkzv1XjlwAX0SgWo_ArDvC/exec';
+
+const SLOTS = [
+  { id: 's1', time: '7:00 – 7:30' },
+  { id: 's2', time: '7:30 – 8:00' },
+  { id: 's3', time: '8:00 – 8:30' },
+  { id: 's4', time: '8:30 – 9:00' },
+  { id: 's5', time: '9:00 – 9:30' },
+  { id: 's6', time: '9:30 – 10:00' },
+];
+const SLOT_CAP = 33; // 195 / 2 ngày / 3 = ~32.5, dùng 33 (ngày 07: 33x3=99, ngày 08: 32x3+33=99)
+// Điều chỉnh: ngày 07 = [33,33,33] = 99, ngày 08 = [32,32,33,33,33,33] → dùng đều 33/slot cho gọn
+// Tổng: 6 slots x 33 x 2 ngày = 396 capacity > 195 → an toàn, server lock khi tổng đủ
+
+const MAIN_EXAM_DAYS = [
+  { date: '16/07', weekday: 'Thứ Tư', type: 'main' },
+  { date: '17/07', weekday: 'Thứ Năm', type: 'main' },
+  { date: '18/07', weekday: 'Thứ Sáu', type: 'main' },
+  { date: '19/07', weekday: 'Thứ Bảy', type: 'main' },
+];
+const VET_EXAM_DAYS = [
+  { date: '21/07', weekday: 'Thứ Hai', type: 'vet' },
+  { date: '22/07', weekday: 'Thứ Ba', type: 'vet' },
+];
+
+// ── STATE ───────────────────────────────────────────────────────────────────
+let state = {
+  currentDay: '07',
+  selectedSlotId: null,
+  selectedSlotDay: null,
+  selectedExamDate: null,
+  slotCounts: {
+    '07': { s1:0, s2:0, s3:0, s4:0, s5:0, s6:0 },
+    '08': { s1:0, s2:0, s3:0, s4:0, s5:0, s6:0 },
+  },
+  examCounts: {},
+  totalRegistered: 0,
+  TOTAL_CAP: 195,
+};
+
+// ── INIT ─────────────────────────────────────────────────────────────────────
+async function init() {
+  await fetchCounts();
+  renderSlots();
+  renderExamDays();
+}
+
+async function fetchCounts() {
+  try {
+    const url = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vT96HrSPGFiv6KauRUOu5uaPWeOrWYZLR_wpfl-ZeeEv3E1FD9h5-Er7c-Ro6F10ZihSuNOn_vbSbh2/pub?gid=1079268169&single=true&output=csv&t=' + Date.now();
+    const r = await fetch(url);
+    const text = await r.text();
+    const lines = text.trim().split('\n').slice(1);
+
+    const SLOT_MAP = {};
+    const SLOT_TIMES = ['7:00', '7:30', '8:00', '8:30', '9:00', '9:30'];
+    const SLOT_IDS   = ['s1',   's2',   's3',   's4',   's5',   's6'];
+    SLOT_TIMES.forEach((t, i) => { SLOT_MAP[t] = SLOT_IDS[i]; });
+
+    const slotCounts = {
+      '07': { s1:0, s2:0, s3:0, s4:0, s5:0, s6:0 },
+      '08': { s1:0, s2:0, s3:0, s4:0, s5:0, s6:0 },
+    };
+    const examCounts = {};
+    let total = 0;
+
+    lines.forEach(line => {
+      if (!line.trim()) return;
+      const cols = [];
+      let cur = '', inQ = false;
+      for (let i = 0; i < line.length; i++) {
+        if (line[i] === '"') { inQ = !inQ; }
+        else if (line[i] === ',' && !inQ) { cols.push(cur.trim()); cur = ''; }
+        else { cur += line[i]; }
+      }
+      cols.push(cur.trim());
+
+      const sampleDay  = (cols[7] || '').substring(0, 2);
+      const sampleSlot = (cols[8] || '').trim();
+      const examDate   = (cols[9] || '').substring(0, 5);
+
+      // Match by start time only (first 4-5 chars) to avoid unicode dash issues
+      const startTime = sampleSlot.substring(0, 4).trim();
+      const slotId = SLOT_MAP[startTime];
+      if (sampleDay && slotId && slotCounts[sampleDay]) {
+        slotCounts[sampleDay][slotId]++;
+      }
+      if (examDate) {
+        examCounts[examDate] = (examCounts[examDate] || 0) + 1;
+      }
+      total++;
+    });
+
+    state.slotCounts = slotCounts;
+    state.examCounts = examCounts;
+    state.totalRegistered = total;
+  } catch(e) {
+    console.log('fetchCounts error:', e);
+  }
+}
+
+// ── SLOTS ────────────────────────────────────────────────────────────────────
+function switchDay(day) {
+  state.currentDay = day;
+  document.getElementById('tab-07').classList.toggle('active', day === '07');
+  document.getElementById('tab-08').classList.toggle('active', day === '08');
+  renderSlots();
+}
+
+function renderSlots() {
+  const grid = document.getElementById('slots-grid');
+  const counts = state.slotCounts[state.currentDay];
+  grid.innerHTML = SLOTS.map(slot => {
+    const filled = counts[slot.id] || 0;
+    const remaining = SLOT_CAP - filled;
+    const isFull = remaining <= 0;
+    const isSelected = state.selectedSlotId === slot.id && state.selectedSlotDay === state.currentDay;
+    const isWarn = remaining > 0 && remaining <= 10;
+
+    let capLabel, capClass;
+    if (isFull) { capLabel = 'Đã đầy'; capClass = 'full-label'; }
+    else if (isWarn) { capLabel = `Còn ${remaining} chỗ`; capClass = 'warn'; }
+    else { capLabel = `Còn ${remaining} chỗ`; capClass = 'avail'; }
+
+    return `<div class="slot-btn${isFull?' full':''}${isSelected?' selected':''}"
+      onclick="${isFull?'':` selectSlot('${slot.id}')`}">
+      ${isSelected ? '<div class="slot-selected-badge">✓</div>' : ''}
+      ${isFull ? '<div class="slot-full-badge">HẾT</div>' : ''}
+      <div class="slot-time">${slot.time}</div>
+      <div class="slot-cap ${capClass}">${capLabel}</div>
+    </div>`;
+  }).join('');
+}
+
+function selectSlot(slotId) {
+  state.selectedSlotId = slotId;
+  state.selectedSlotDay = state.currentDay;
+  renderSlots();
+  updateSlotSummary();
+  updateSubmitBtn();
+}
+
+function updateSlotSummary() {
+  const el = document.getElementById('slot-summary');
+  if (!state.selectedSlotId) { el.classList.remove('visible'); return; }
+  const slot = SLOTS.find(s => s.id === state.selectedSlotId);
+  document.getElementById('sum-sample-day').textContent =
+    `${state.selectedSlotDay === '07' ? 'Thứ Hai' : 'Thứ Ba'}, ${state.selectedSlotDay}/07/2026`;
+  document.getElementById('sum-sample-slot').textContent = slot.time;
+  el.classList.add('visible');
+}
+
+// ── EXAM DAYS ────────────────────────────────────────────────────────────────
+function renderExamDays() {
+  const totalFull = state.totalRegistered >= state.TOTAL_CAP;
+
+  function renderGrid(days, containerId) {
+    const container = document.getElementById(containerId);
+    container.innerHTML = days.map(day => {
+      const count = state.examCounts[day.date] || 0;
+      const isFull = totalFull;
+      const isSelected = state.selectedExamDate === day.date;
+      const isVet = day.type === 'vet';
+      return `<div class="exam-day-btn${isFull?' full':''}${isSelected?' selected':''}${isVet?' vetscrn':''}"
+        onclick="${isFull?'':` selectExam('${day.date}', '${day.weekday}')`}">
+        <div class="exam-date-num">${day.date.split('/')[0]}</div>
+        <div class="exam-day-meta">
+          <div class="exam-day-weekday">${day.weekday}</div>
+          <div class="exam-day-status">${isFull ? '🔒 Đã đóng' : (isVet ? 'Lịch vét' : 'Còn lịch')}</div>
+        </div>
+        <div class="exam-check"></div>
+      </div>`;
+    }).join('');
+  }
+
+  renderGrid(MAIN_EXAM_DAYS, 'main-exam-grid');
+  renderGrid(VET_EXAM_DAYS, 'vet-exam-grid');
+}
+
+function selectExam(date, weekday) {
+  state.selectedExamDate = date;
+  renderExamDays();
+  document.getElementById('sum-exam-day').textContent = `${weekday}, ${date}/2026`;
+  document.getElementById('exam-summary').classList.add('visible');
+  updateSubmitBtn();
+}
+
+// ── SUBMIT ───────────────────────────────────────────────────────────────────
+function updateSubmitBtn() {
+  const ok = document.getElementById('consent').checked
+    && state.selectedSlotId
+    && state.selectedExamDate;
+  document.getElementById('btn-submit').disabled = !ok;
+}
+
+function validate() {
+  let ok = true;
+  const fields = [
+    { id: 'f-name', fg: 'fg-name', check: v => v.trim().length >= 2 },
+    { id: 'f-dob',  fg: 'fg-dob',  check: v => /^\d{2}\/\d{2}\/\d{4}$/.test(v.trim()) },
+    { id: 'f-cccd', fg: 'fg-cccd', check: v => /^[0-9]{9,12}$/.test(v.trim()) },
+    { id: 'f-company', fg: 'fg-company', check: v => v.trim().length >= 2 },
+  ];
+  fields.forEach(f => {
+    const val = document.getElementById(f.id).value;
+    const fg = document.getElementById(f.fg);
+    if (!f.check(val)) { fg.classList.add('field-error'); ok = false; }
+    else fg.classList.remove('field-error');
+  });
+  return ok;
+}
+
+async function handleSubmit() {
+  if (!validate()) { showToast('Vui lòng kiểm tra lại thông tin', true); return; }
+
+  const slot = SLOTS.find(s => s.id === state.selectedSlotId);
+  const payload = {
+    city: 'HCM',
+    name: document.getElementById('f-name').value.trim(),
+    dob: document.getElementById('f-dob').value,
+    cccd: document.getElementById('f-cccd').value.trim(),
+    company: document.getElementById('f-company').value.trim(),
+    history: document.getElementById('f-history').value.trim(),
+    treatment: document.getElementById('f-treatment').value.trim(),
+    sampleDay: `${state.selectedSlotDay}/07/2026`,
+    sampleSlot: slot.time,
+    examDate: `${state.selectedExamDate}/2026`,
+    timestamp: new Date().toISOString(),
+  };
+
+  // UI loading
+  document.getElementById('btn-text').style.display = 'none';
+  document.getElementById('btn-loading').style.display = 'flex';
+  document.getElementById('btn-submit').disabled = true;
+
+  try {
+    const r = await fetch(GOOGLE_SCRIPT_URL, {
+      method: 'POST',
+      mode: 'no-cors',
+      body: JSON.stringify(payload),
+    });
+    // no-cors returns opaque response — assume ok
+    showSuccess(payload);
+  } catch(e) {
+    showToast('Không thể kết nối — kiểm tra mạng và thử lại', true);
+  }
+
+  document.getElementById('btn-text').style.display = '';
+  document.getElementById('btn-loading').style.display = 'none';
+}
+
+function showSuccess(p) {
+  document.getElementById('reg-form').style.display = 'none';
+  const ss = document.getElementById('success-screen');
+  ss.style.display = 'block';
+  document.getElementById('sc-name').textContent = p.name;
+  document.getElementById('sc-cccd').textContent = p.cccd;
+  document.getElementById('sc-company').textContent = p.company;
+  document.getElementById('sc-sample').textContent = `${p.sampleDay} — ${p.sampleSlot}`;
+  document.getElementById('sc-exam').textContent = p.examDate;
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+
+function showToast(msg, isError) {
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.className = isError ? 'error' : '';
+  t.classList.add('show');
+  setTimeout(() => t.classList.remove('show'), 3500);
+}
+
+function formatDOB(input) {
+  var v = input.value.replace(/\D/g, '');
+  if (v.length >= 3 && v.length <= 4) v = v.slice(0,2) + '/' + v.slice(2);
+  else if (v.length >= 5) v = v.slice(0,2) + '/' + v.slice(2,4) + '/' + v.slice(4,8);
+  input.value = v;
+}
+
+init();
+</script>
+</body>
+</html>/* ── ERROR ── */
   .error-msg {
     font-size: 12px;
     color: var(--red);
