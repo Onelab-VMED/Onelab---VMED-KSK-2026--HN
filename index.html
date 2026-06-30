@@ -1179,59 +1179,10 @@ async function fetchCounts() {
       cols.push(cur.trim());
 
       const rawDay = (cols[7] || '').trim();
-      const sampleDay = rawDay.split('/')[0].padStart(2, '0');
+      const sampleDay = rawDay.split('/')[0].padStart(2, '0'); // handle "7/7/2026" or "07/07/2026"
       const sampleSlot = (cols[8] || '').trim();
       const rawExam = (cols[9] || '').trim();
       const examDate = rawExam.length >= 5 ? rawExam.substring(0, 5) : '';
-
-      const startTime = sampleSlot.substring(0, 4).trim();
-      const slotId = SLOT_MAP[startTime];
-      if (sampleDay && slotId && slotCounts[sampleDay]) {
-        slotCounts[sampleDay][slotId]++;
-      }
-      if (examDate) {
-        examCounts[examDate] = (examCounts[examDate] || 0) + 1;
-      }
-      total++;
-    });
-
-    state.slotCounts = slotCounts;
-    state.examCounts = examCounts;
-    state.totalRegistered = total;
-  } catch(e) {
-    console.log('fetchCounts error:', e);
-  }
-}
-    const r = await fetch(url);
-    const text = await r.text();
-    const lines = text.trim().split('\n').slice(1);
-
-    const SLOT_MAP = {};
-    const SLOT_TIMES = ['7:00', '7:30', '8:00', '8:30', '9:00', '9:30'];
-    const SLOT_IDS   = ['s1',   's2',   's3',   's4',   's5',   's6'];
-    SLOT_TIMES.forEach((t, i) => { SLOT_MAP[t] = SLOT_IDS[i]; });
-
-    const slotCounts = {
-      '07': { s1:0, s2:0, s3:0, s4:0, s5:0, s6:0 },
-      '08': { s1:0, s2:0, s3:0, s4:0, s5:0, s6:0 },
-    };
-    const examCounts = {};
-    let total = 0;
-
-    lines.forEach(line => {
-      if (!line.trim()) return;
-      const cols = [];
-      let cur = '', inQ = false;
-      for (let i = 0; i < line.length; i++) {
-        if (line[i] === '"') { inQ = !inQ; }
-        else if (line[i] === ',' && !inQ) { cols.push(cur.trim()); cur = ''; }
-        else { cur += line[i]; }
-      }
-      cols.push(cur.trim());
-
-      const sampleDay  = (cols[7] || '').substring(0, 2);
-      const sampleSlot = (cols[8] || '').trim();
-      const examDate   = (cols[9] || '').substring(0, 5);
 
       // Match by start time only (first 4-5 chars) to avoid unicode dash issues
       const startTime = sampleSlot.substring(0, 4).trim();
