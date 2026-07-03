@@ -1103,17 +1103,25 @@
 // ── CONFIG ──────────────────────────────────────────────────────────────────
 const GOOGLE_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbz1fbJ3onjr5wEJsk2JA1ScocQyI3-N1bbCG_L1NQLWn3Zkzv1XjlwAX0SgWo_ArDvC/exec';
 
-const SLOTS = [
-  { id: 's1', time: '7:00 – 7:30',  cap: 17 },
-  { id: 's2', time: '7:30 – 8:00',  cap: 17 },
-  { id: 's3', time: '8:00 – 8:30',  cap: 16 },
-  { id: 's4', time: '8:30 – 9:00',  cap: 16 },
-  { id: 's5', time: '9:00 – 9:30',  cap: 13 },
-  { id: 's6', time: '9:30 – 10:00', cap: 6  },
-];
-const SLOT_CAP = 30; // fallback, không dùng nữa
-// Điều chỉnh: ngày 07 = [33,33,33] = 99, ngày 08 = [32,32,33,33,33,33] → dùng đều 33/slot cho gọn
-// Tổng: 6 slots x 33 x 2 ngày = 396 capacity > 195 → an toàn, server lock khi tổng đủ
+// Cap theo từng ngày/khung giờ — 171 chia đều 09/07 & 10/07, đã đối chiếu số đã đăng ký thực tế
+const SLOTS_BY_DAY = {
+  '09': [
+    { id: 's1', time: '7:00 – 7:30',  cap: 14 },
+    { id: 's2', time: '7:30 – 8:00',  cap: 14 },
+    { id: 's3', time: '8:00 – 8:30',  cap: 15 },
+    { id: 's4', time: '8:30 – 9:00',  cap: 16 },
+    { id: 's5', time: '9:00 – 9:30',  cap: 14 },
+    { id: 's6', time: '9:30 – 10:00', cap: 14 },
+  ],
+  '10': [
+    { id: 's1', time: '7:00 – 7:30',  cap: 14 },
+    { id: 's2', time: '7:30 – 8:00',  cap: 14 },
+    { id: 's3', time: '8:00 – 8:30',  cap: 14 },
+    { id: 's4', time: '8:30 – 9:00',  cap: 15 },
+    { id: 's5', time: '9:00 – 9:30',  cap: 14 },
+    { id: 's6', time: '9:30 – 10:00', cap: 14 },
+  ],
+};
 
 const MAIN_EXAM_DAYS = [
   { date: '16/07', weekday: 'Thứ Năm', type: 'main' },
@@ -1137,7 +1145,7 @@ let state = {
   },
   examCounts: {},
   totalRegistered: 0,
-  TOTAL_CAP: 176,
+  TOTAL_CAP: 172, // 171 mục tiêu + 1 slot đã vượt baseline (09/07, 8:30–9:00)
 };
 
 // ── INIT ─────────────────────────────────────────────────────────────────────
@@ -1178,7 +1186,7 @@ async function fetchCounts() {
       cols.push(cur.trim());
 
       const rawDay = (cols[7] || '').trim();
-      const sampleDay = rawDay.split('/')[0].padStart(2, '0'); // handle "7/7/2026" or "07/07/2026"
+      const sampleDay = rawDay.split('/')[0].padStart(2, '0'); // handle "9/7/2026" or "09/07/2026"
       const sampleSlot = (cols[8] || '').trim();
       const rawExam = (cols[9] || '').trim();
       const examDate = rawExam.length >= 5 ? rawExam.substring(0, 5) : '';
@@ -1212,14 +1220,16 @@ function switchDay(day) {
 }
 
 function renderSlots() {
+  const grid = document.getElementById('slots-grid');
   const counts = state.slotCounts[state.currentDay];
-  document.getElementById('slots-grid').innerHTML = SLOTS.map(slot => {
+  const slots = SLOTS_BY_DAY[state.currentDay];
+
+  grid.innerHTML = slots.map(slot => {
     const filled = counts[slot.id] || 0;
-    const cap = slot.cap;
-    const remaining = cap - filled;
+    const remaining = slot.cap - filled;
     const isFull = remaining <= 0;
     const isSelected = state.selectedSlotId === slot.id && state.selectedSlotDay === state.currentDay;
-    const isWarn = remaining > 0 && remaining <= 10;
+    const isWarn = remaining > 0 && remaining <= 5;
 
     let capLabel, capClass;
     if (isFull) { capLabel = 'Đã đầy'; capClass = 'full-label'; }
@@ -1247,7 +1257,7 @@ function selectSlot(slotId) {
 function updateSlotSummary() {
   const el = document.getElementById('slot-summary');
   if (!state.selectedSlotId) { el.classList.remove('visible'); return; }
-  const slot = SLOTS.find(s => s.id === state.selectedSlotId);
+  const slot = SLOTS_BY_DAY[state.selectedSlotDay].find(s => s.id === state.selectedSlotId);
   document.getElementById('sum-sample-day').textContent =
     `${state.selectedSlotDay === '09' ? 'Thứ Năm' : 'Thứ Sáu'}, ${state.selectedSlotDay}/07/2026`;
   document.getElementById('sum-sample-slot').textContent = slot.time;
@@ -1317,7 +1327,7 @@ function validate() {
 async function handleSubmit() {
   if (!validate()) { showToast('Vui lòng kiểm tra lại thông tin', true); return; }
 
-  const slot = SLOTS.find(s => s.id === state.selectedSlotId);
+  const slot = SLOTS_BY_DAY[state.selectedSlotDay].find(s => s.id === state.selectedSlotId);
   const payload = {
     city: 'HN',
     name: document.getElementById('f-name').value.trim(),
