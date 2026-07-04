@@ -393,6 +393,16 @@
   }
   @media (max-width: 400px) { .exam-days-grid { grid-template-columns: 1fr; } }
 
+  .exam-days-list { margin-bottom: 16px; }
+  .exam-day-block { margin-bottom: 14px; }
+  .exam-day-block:last-child { margin-bottom: 0; }
+  .exam-day-block-header {
+    font-size: 13px;
+    font-weight: 700;
+    color: var(--gray-800);
+    margin-bottom: 8px;
+  }
+
   .exam-day-btn {
     position: relative;
     padding: 14px 16px;
@@ -947,10 +957,10 @@
 
     <div class="card">
       <div class="main-round-label">Vòng chính — ưu tiên chọn</div>
-      <div class="exam-days-grid" id="main-exam-grid"></div>
+      <div class="exam-days-list" id="main-exam-grid"></div>
 
       <div class="vetscrn-label">Khám vét — nếu không có lịch phù hợp</div>
-      <div class="exam-days-grid" id="vet-exam-grid"></div>
+      <div class="exam-days-list" id="vet-exam-grid"></div>
 
       <div class="selection-summary" id="exam-summary">
         <div class="summary-title">✓ Đã chọn</div>
@@ -1123,14 +1133,15 @@ const SLOTS_BY_DAY = {
   ],
 };
 
+// cap = số suất còn có thể đăng ký (tính từ thời điểm khóa lại này), null = buổi không mở
 const MAIN_EXAM_DAYS = [
-  { date: '16/07', weekday: 'Thứ Năm', type: 'main' },
-  { date: '17/07', weekday: 'Thứ Sáu', type: 'main' },
-  { date: '18/07', weekday: 'Thứ Bảy', type: 'main' },
+  { date: '16/07', weekday: 'Thứ Năm', type: 'main', sessions: { sang: { cap: 0 },  chieu: { cap: 9 }  } },
+  { date: '17/07', weekday: 'Thứ Sáu', type: 'main', sessions: { sang: { cap: 0 },  chieu: { cap: 26 } } },
+  { date: '18/07', weekday: 'Thứ Bảy', type: 'main', sessions: { sang: { cap: 10 }, chieu: { cap: 20 } } },
 ];
 const VET_EXAM_DAYS = [
-  { date: '20/07', weekday: 'Thứ Hai', type: 'vet' },
-  { date: '21/07', weekday: 'Thứ Ba', type: 'vet' },
+  { date: '20/07', weekday: 'Thứ Hai', type: 'vet', sessions: { sang: { cap: 10 }, chieu: null } },
+  { date: '21/07', weekday: 'Thứ Ba', type: 'vet', sessions: { sang: { cap: 5 },  chieu: null } },
 ];
 
 // ── STATE ───────────────────────────────────────────────────────────────────
@@ -1139,6 +1150,7 @@ let state = {
   selectedSlotId: null,
   selectedSlotDay: null,
   selectedExamDate: null,
+  selectedExamSession: null,
   slotCounts: {
     '09': { s1:0, s2:0, s3:0, s4:0, s5:0, s6:0 },
     '10': { s1:0, s2:0, s3:0, s4:0, s5:0, s6:0 },
@@ -1190,6 +1202,7 @@ async function fetchCounts() {
       const sampleSlot = (cols[8] || '').trim();
       const rawExam = (cols[9] || '').trim();
       const examDate = rawExam.length >= 5 ? rawExam.substring(0, 5) : '';
+      const examSession = rawExam.includes('Chiều') ? 'chieu' : (rawExam.includes('Sáng') ? 'sang' : null);
 
       // Match by start time only (first 4-5 chars) to avoid unicode dash issues
       const startTime = sampleSlot.substring(0, 4).trim();
@@ -1197,8 +1210,9 @@ async function fetchCounts() {
       if (sampleDay && slotId && slotCounts[sampleDay]) {
         slotCounts[sampleDay][slotId]++;
       }
-      if (examDate) {
-        examCounts[examDate] = (examCounts[examDate] || 0) + 1;
+      if (examDate && examSession) {
+        const key = `${examDate}_${examSession}`;
+        examCounts[key] = (examCounts[key] || 0) + 1;
       }
       total++;
     });
@@ -1265,36 +1279,51 @@ function updateSlotSummary() {
 }
 
 // ── EXAM DAYS ────────────────────────────────────────────────────────────────
-function renderExamDays() {
-  const totalFull = state.totalRegistered >= state.TOTAL_CAP;
+const SESSION_LABEL = { sang: 'Sáng', chieu: 'Chiều' };
 
-  function renderGrid(days, containerId) {
+function renderExamDays() {
+  function renderGroup(days, containerId) {
     const container = document.getElementById(containerId);
     container.innerHTML = days.map(day => {
-      const count = state.examCounts[day.date] || 0;
-      const isFull = totalFull;
-      const isSelected = state.selectedExamDate === day.date;
-      const isVet = day.type === 'vet';
-      return `<div class="exam-day-btn${isFull?' full':''}${isSelected?' selected':''}${isVet?' vetscrn':''}"
-        onclick="${isFull?'':` selectExam('${day.date}', '${day.weekday}')`}">
-        <div class="exam-date-num">${day.date.split('/')[0]}</div>
-        <div class="exam-day-meta">
-          <div class="exam-day-weekday">${day.weekday}</div>
-          <div class="exam-day-status">${isFull ? '🔒 Đã đóng' : (isVet ? 'Lịch vét' : 'Còn lịch')}</div>
-        </div>
-        <div class="exam-check"></div>
+      const sessionsHtml = ['sang', 'chieu'].map(sess => {
+        const cfg = day.sessions[sess];
+        if (!cfg) return ''; // buổi không mở cho ngày này
+        const filled = state.examCounts[`${day.date}_${sess}`] || 0;
+        const remaining = cfg.cap - filled;
+        const isFull = remaining <= 0;
+        const isSelected = state.selectedExamDate === day.date && state.selectedExamSession === sess;
+        const label = SESSION_LABEL[sess];
+
+        let capLabel, capClass;
+        if (isFull) { capLabel = 'Đã đầy'; capClass = 'full-label'; }
+        else if (remaining <= 5) { capLabel = `Còn ${remaining} chỗ`; capClass = 'warn'; }
+        else { capLabel = `Còn ${remaining} chỗ`; capClass = 'avail'; }
+
+        return `<div class="slot-btn${isFull?' full':''}${isSelected?' selected':''}"
+          onclick="${isFull?'':`selectExam('${day.date}','${day.weekday}','${sess}')`}">
+          ${isSelected ? '<div class="slot-selected-badge">✓</div>' : ''}
+          ${isFull ? '<div class="slot-full-badge">HẾT</div>' : ''}
+          <div class="slot-time">${label}</div>
+          <div class="slot-cap ${capClass}">${capLabel}</div>
+        </div>`;
+      }).join('');
+
+      return `<div class="exam-day-block">
+        <div class="exam-day-block-header">${day.weekday}, ${day.date}</div>
+        <div class="slots-grid">${sessionsHtml}</div>
       </div>`;
     }).join('');
   }
 
-  renderGrid(MAIN_EXAM_DAYS, 'main-exam-grid');
-  renderGrid(VET_EXAM_DAYS, 'vet-exam-grid');
+  renderGroup(MAIN_EXAM_DAYS, 'main-exam-grid');
+  renderGroup(VET_EXAM_DAYS, 'vet-exam-grid');
 }
 
-function selectExam(date, weekday) {
+function selectExam(date, weekday, session) {
   state.selectedExamDate = date;
+  state.selectedExamSession = session;
   renderExamDays();
-  document.getElementById('sum-exam-day').textContent = `${weekday}, ${date}/2026`;
+  document.getElementById('sum-exam-day').textContent = `${weekday}, ${date}/2026 - Buổi ${SESSION_LABEL[session]}`;
   document.getElementById('exam-summary').classList.add('visible');
   updateSubmitBtn();
 }
@@ -1303,7 +1332,8 @@ function selectExam(date, weekday) {
 function updateSubmitBtn() {
   const ok = document.getElementById('consent').checked
     && state.selectedSlotId
-    && state.selectedExamDate;
+    && state.selectedExamDate
+    && state.selectedExamSession;
   document.getElementById('btn-submit').disabled = !ok;
 }
 
@@ -1338,7 +1368,7 @@ async function handleSubmit() {
     treatment: document.getElementById('f-treatment').value.trim(),
     sampleDay: `${state.selectedSlotDay}/07/2026`,
     sampleSlot: slot.time,
-    examDate: `${state.selectedExamDate}/2026`,
+    examDate: `${state.selectedExamDate}/2026 - ${SESSION_LABEL[state.selectedExamSession]}`,
     timestamp: new Date().toISOString(),
   };
 
